@@ -1,0 +1,183 @@
+<%= form_for @album, :url => albums_path, :html => { :multipart => true } do |form| %>
+<%= form.text_field :albumname %>
+  <%= form.file_field :image %>
+  <%=form.submit%>
+<% end %>
+<input type="button" onclick='fblogin();' id="bt"  value="facebook login"/>
+ <img src="#" id="ab" />
+<input type="button" value="Google+" onclick="GoogleSignIn();"/>
+<script>
+//***** For google *****// 
+
+(function () {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/client:plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+
+
+function signinCallback(authResult) {
+    if (authResult['status']['signed_in']) {
+
+        // when the signin was successful 
+
+        getDetails();                            // <<~~~~ getting the details right after login
+
+
+    } else {
+        console.log('Sign-in state: ' + authResult['error']);
+    }
+}
+
+
+
+function GoogleSignIn() {
+    var myParams = {
+        'clientid': '729541092160-5qer5apn3f5k0ctkbmnc3fd9s73mlfdc.apps.googleusercontent.com',
+        'cookiepolicy': 'single_host_origin',
+        'callback': 'signinCallback',
+        'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read',
+        'requestvisibleactions': 'http://schema.org/AddAction'
+
+        //  for more on app permission/scope "developers.google.com/+/api/oauth#scopes" 
+
+    };
+    gapi.auth.signIn(myParams);
+
+
+}
+
+
+function getDetails() {
+    gapi.client.load('plus', 'v1', function () {
+        var request = gapi.client.plus.people.get({
+            'userId': 'me'
+        });
+        request.execute(function (resp) {
+            alert(resp.emails[0].value + resp.name.givenName + resp.name.familyName + resp.gender + resp.image.url);
+			$('#ab').attr('src', resp.image.url);
+
+        });
+    });
+
+    return true;
+}
+
+function GoogleSignOut() {
+    console.log("trying to sign out");
+    gapi.auth.signOut();
+}
+
+ //-------------------------------------------------------------------------------------------------------------------        
+          window.fbAsyncInit = function () {
+              FB.init({
+                  appId: '291552081050269',
+                  xfbml: true,
+                  version: 'v2.1'
+              });
+          };
+
+          (function (d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) { return; }
+              js = d.createElement(s); js.id = id;
+              js.src = "//connect.facebook.net/en_US/sdk.js";
+              fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+
+
+
+
+          function checkLoginState() {
+              FB.getLoginStatus(function (response) {
+                  statusChangeCallback(response);
+              });
+          }
+
+          //check login status that wether already login or not
+          FB.getLoginStatus(function (response) {
+              statusChangeCallback(response);
+          });
+
+
+
+
+          function statusChangeCallback(response) {
+              console.log('statusChangeCallback');
+              console.log(response);
+              // The response object is returned with a status field that lets the
+              // app know the current login status of the person.
+              // Full docs on the response object can be found in the documentation
+              // for FB.getLoginStatus().
+              if (response.status === 'connected') {
+                  // Logged into your app and Facebook.
+                  // testAPI();
+              } else if (response.status === 'not_authorized') {
+                  // The person is logged into Facebook, but not your app.
+                  //document.getElementById('status').innerHTML = 'Please log ' +
+                  'into this app.';
+              } else {
+                  // The person is not logged into Facebook, so we're not sure if
+                  // they are logged into this app or not.
+                  // document.getElementById('status').innerHTML = 'Please log ' +
+                  'into Facebook.';
+              }
+          }
+
+
+
+          function fblogin() {
+              FB.login(function (response) {
+
+                  statusChangeCallback(response);
+                  getdetails();
+              }, { scope: 'email' }
+
+
+              );
+
+          }
+
+          // this function gives details..
+          function getdetails() {
+              FB.api('/me', function (response) {
+                  console.log(response);
+                  FB.logout(function (response) { });
+                  //$('#show').innerHtml= response.email;
+                  alert(response.email + "--->" + response.first_name);
+                  image = "http://graph.facebook.com/" + response.id + "/picture";
+                  
+                  $('#ab').attr('src', image);
+                 
+                  //alert(response.first_name);
+                  var name = response.first_name;
+                  var email = response.email;
+                     $(function () {
+                                  
+                        
+                         jQuery.ajax({
+                         
+                                  type: "POST",
+                                  url: "Default.aspx/dataSave",
+                                  data: "{'name': '" + name.toString() +", 'email': '" + email.toString() + "'}",
+                                  contentType: "application/json; charset=utf-8",
+                                  dataType: "json",
+                                  success: function (msg) {
+                                      $('#show').append(msg.d);
+                                  }
+
+                              });
+             
+
+
+                      });
+
+
+
+
+              });
+          }
+       
+
+
+</script>
