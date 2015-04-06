@@ -4,7 +4,8 @@
   <%=form.submit%>
 <% end %>
 <input type="button" onclick='fblogin();' id="bt"  value="facebook login"/>
- <img src="#" id="ab" />
+ <img src="#" id="gpab" >
+ <img src="#" id="fpab" >
 <input type="button" value="Google+" onclick="GoogleSignIn();"/>
 <script>
 //***** For google *****// 
@@ -55,7 +56,7 @@ function getDetails() {
         });
         request.execute(function (resp) {
             alert(resp.emails[0].value + resp.name.givenName + resp.name.familyName + resp.gender + resp.image.url);
-			$('#ab').attr('src', resp.image.url);
+			$('#gpab').attr('src', resp.image.url);
 
         });
     });
@@ -147,7 +148,7 @@ function GoogleSignOut() {
                   alert(response.email + "--->" + response.first_name);
                   image = "http://graph.facebook.com/" + response.id + "/picture";
                   
-                  $('#ab').attr('src', image);
+                  $('#fpab').attr('src', image);
                  
                   //alert(response.first_name);
                   var name = response.first_name;
