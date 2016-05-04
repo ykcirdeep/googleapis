@@ -6,68 +6,23 @@
 <input type="button" onclick='fblogin();' id="bt"  value="facebook login"/>
  <img src="#" id="gpab" >
  <img src="#" id="fpab" >
-<input type="button" value="Google+" onclick="GoogleSignIn();"/>
+ <div class="g-signin2" data-onsuccess="onSignIn"></div>
+ <a href="#" onclick="signOut();">Sign out</a>
 <script>
 //***** For google *****// 
-
-(function () {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/client:plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-})();
-
-
-function signinCallback(authResult) {
-    if (authResult['status']['signed_in']) {
-
-        // when the signin was successful 
-
-        getDetails();                            // <<~~~~ getting the details right after login
-
-
-    } else {
-        console.log('Sign-in state: ' + authResult['error']);
-    }
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail());
 }
-
-
-
-function GoogleSignIn() {
-    var myParams = {
-        'clientid': '729541092160-5qer5apn3f5k0ctkbmnc3fd9s73mlfdc.apps.googleusercontent.com',
-        'cookiepolicy': 'single_host_origin',
-        'callback': 'signinCallback',
-        'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read',
-        'requestvisibleactions': 'http://schema.org/AddAction'
-
-        //  for more on app permission/scope "developers.google.com/+/api/oauth#scopes" 
-
-    };
-    gapi.auth.signIn(myParams);
-
-
-}
-
-
-function getDetails() {
-    gapi.client.load('plus', 'v1', function () {
-        var request = gapi.client.plus.people.get({
-            'userId': 'me'
-        });
-        request.execute(function (resp) {
-            alert(resp.emails[0].value + resp.name.givenName + resp.name.familyName + resp.gender + resp.image.url);
-			$('#gpab').attr('src', resp.image.url);
-
-        });
+function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
     });
-
-    return true;
-}
-
-function GoogleSignOut() {
-    console.log("trying to sign out");
-    gapi.auth.signOut();
-}
+  }
 
  //-------------------------------------------------------------------------------------------------------------------        
           window.fbAsyncInit = function () {
