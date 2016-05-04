@@ -3,6 +3,8 @@
   <%= form.file_field :image %>
   <%=form.submit%>
 <% end %>
+<div id=name></div>
+<div id=email></div>
 <input type="button" onclick='fblogin();' id="bt"  value="facebook login"/>
  <img src="#" id="gpab" >
  <img src="#" id="fpab" >
@@ -13,9 +15,10 @@
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
-  console.log('Email: ' + profile.getEmail());
+  $("#name").empty().html( profile.getName());
+  $("#name").empty().html( profile.getEmail());
+   $('#gpab').attr('src', profile.getImageUrl());
+  
 }
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
